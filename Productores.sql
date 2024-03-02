@@ -1,0 +1,61 @@
+create table tipoProducto(cveTipoP varchar (10) not null,
+                          Nombre varchar (5),
+						  constraint tipoProductoPK primary key (cveTipoP));
+create table Unidad(cveUnidad varchar (10) not null,
+                    Nombre varchar (5),
+					constraint unidadPK primary key (cveUnidad));
+create table tipoSoc(cveTipoS varchar (10) not null,
+                     Nombre varchar (5),
+					 constraint tipoSPK primary key (cveTipoS));
+create table Cuota(cveCuota varchar (10) not null,
+                    Importe decimal(9,2),
+					constraint cuotaPK primary key (cveCuota));
+create table Productor(cveProductor varchar (10) not null,
+                       Nombre varchar (30),
+					   RFC char (13),
+					   Domicilio varchar (50),
+					   Telefono char (10),
+					   cveCuota varchar (10) not null,
+					   cveTipoS varchar (10) not null,
+					   constraint productorPK primary key (cveProductor),
+					   constraint productorFK1 foreign key (cveCuota) references Cuota(cveCuota),
+					   constraint productorFK2 foreign key (cveTipoS) references tipoSoc(cveTipoS));
+create table Empresa(cveEmpresa varchar (10) not null,
+                     Nombre varchar (30),
+					 RFC char(13),
+					 cveTipoS varchar (10) not null,
+					 constraint empresaPK primary key (cveEmpresa),
+					 constraint empresaFK1 foreign key (cveTipoS) references tipoSoc(cveTipoS));
+create table Producto(cveProd varchar (10) not null,
+                      Nombre varchar (30),
+					  Descripcion varchar (30),
+					  cveUnidad varchar (10) not null,
+					  cveTipoP varchar (10),
+					  constraint productoPK primary key (cveProd),
+					  constraint productoFK1 foreign key (cveUnidad) references Unidad(cveUnidad),
+					  constraint productoFK2 foreign key (cveTipoP) references tipoProducto(cveTipoP));
+create table Producen(cveProductor varchar (10) not null,
+                      cveProd varchar (10) not null,
+					  constraint producenPK primary key (cveProductor,cveProd),
+					  constraint producenFK1 foreign key (cveProductor) references Productor(cveProductor),
+					  constraint producenFK2 foreign key (cveProd) references Producto(cveProd));
+create table Compran(cveEmpresa varchar (10) not null,
+                     cveProd varchar (10) not null,
+					 constraint compranPK primary key (cveEmpresa,cveProd),
+					 constraint compranFK1 foreign key (cveEmpresa) references Empresa (cveEmpresa),
+					 constraint compranFK2 foreign key (cveProd) references Producto (cveProd));
+create table Vende(Precio decimal(9,2),
+                   cveEmpresa varchar(10) not null,
+				   cveProd varchar (10) not null,
+				   cveProductor varchar (10) not null,
+				   constraint vendePK primary key(cveEmpresa,cveProd,cveProductor),
+				   constraint vendeFK1 foreign key (cveEmpresa) references Empresa (cveEmpresa),
+				   constraint vendeFK2 foreign key (cveProd) references Producto (cveProd),
+				   constraint vendeFK3 foreign key (cveProductor) references Productor(cveProductor));
+create table Contacto(noContac varchar (10) not null,
+                      Nombre varchar (30),
+					  Telefono char (10),
+					  Domicilio varchar (50),
+					  cveEmpresa varchar (10) not null,
+					  constraint contactoPK primary key(noContac,cveEmpresa),
+					  constraint contactoFK1 foreign key (cveEmpresa) references Empresa (cveEmpresa));
